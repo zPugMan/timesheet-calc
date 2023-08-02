@@ -3,8 +3,8 @@
 Code to retrieve logged hours from Square. Logged hours are reported on a bi-monthly basis based on the provided `start_date` positional argument.
 
 For example:
-`2023-07-01` - Retrieves all data from 7/1 to 7/15.
-`2023-07-16` - Retrieves all data from 7/16 to the end of the month, i.e. 7/31.
+* `2023-07-01` - Retrieves all data from 7/1 to 7/15.
+* `2023-07-16` - Retrieves all data from 7/16 to the end of the month, i.e. 7/31.
 
 ## Help
 For help, include the `-h` argument.

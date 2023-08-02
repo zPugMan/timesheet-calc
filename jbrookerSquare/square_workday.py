@@ -70,8 +70,8 @@ class SquareWorkday:
         emp_list = []
 
         print(f"{'Employee':10s} {'Day':5s}    {'start':5s}  {'end':5s}   {'total':5s}  {'reg':5s} {'ot':5s}")
+        print(f"{'-'*80}")
         for day in days:
-            
             if day.month != report_start.month:
                 # log.info(f"{day.month} != {report_start.month}: {day.month != report_start.month}")
                 continue
@@ -79,10 +79,11 @@ class SquareWorkday:
             if report_start.day == 1 and day.day > 15:
                 # log.info(f"1-15 check: {day}")
                 continue
-            elif report_start.day == 15 and day.day < 15:
+            elif report_start.day == 16 and day.day <= 15:
                 # log.info(f"15+ check: {day}")
                 continue
             else:
+                # log.info(f"start day: {report_start.day} ; eval day: {day}")
                 rec = list(filter(lambda r: r['start'].date() == day, data))
                 if rec == []:
                     print(f"{'':10s} {day:%b-%d}")
@@ -102,7 +103,7 @@ class SquareWorkday:
                     # log.info(shift)
                     print(f"{shift['employee']:10s} {start:%b-%d}   {start:%H:%M}  {end:%H:%M}   {clock_time:.2f}   {shift['normal_time']:.2f}  {shift['ot_time']:.2f}")
         print("")
-        print(f"{'Pay total-----------------------------------------------'}")
+        print(f"Pay total {'-'*70}")
         for emp in emp_list:
             emp_recs = list(filter(lambda rec: rec['employee']==emp, data))
             normal_time = sum(list(map(lambda rec: rec['normal_time'], emp_recs)))

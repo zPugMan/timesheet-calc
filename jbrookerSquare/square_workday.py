@@ -9,7 +9,7 @@ class SquareWorkday:
                 'sandbox':'https://squareupsandbox.com/dashboard/items/library/',
                 'production':'https://squareup.com/dashboard/items/library/'
                 }
-    def retrieve_workday_data(self, start_date: str, end_date: str):
+    def retrieve_workday_data(self, start_date: str, end_date: str) -> str:
         log.info("Opening connection to environment: %s", self.environment)
         end_date = datetime.fromisoformat(end_date)
         start = start_date + "T00:00:00Z"
@@ -36,9 +36,11 @@ class SquareWorkday:
             log.error(result)
 
         # print(shift_data)
-        self.get_report(report_start=datetime.fromisoformat(start_date)
+        result = self.get_report(report_start=datetime.fromisoformat(start_date)
                         , report_end=end_date
                         , data=shift_data)
+        return result
+        
 
     def log_shift(self, shift: dict):
         err = False
@@ -63,14 +65,17 @@ class SquareWorkday:
             log.info("%-20s        %s  %s %10s", shift['employee'], start, end, "ERROR")
             log.error("Failed clockout detected... please correct data.")
 
-    def get_report(self, report_start:datetime.date, report_end:datetime.date, data=[]):
+    def get_report(self, report_start:datetime.date, report_end:datetime.date, data=[]) -> str:
         log.info("Finalized report")
         cal = calendar.Calendar()
         days = cal.itermonthdates(report_start.year, report_start.month)
         emp_list = []
+        result = []
 
-        print(f"{'Employee':10s} {'Day':5s}    {'start':5s}  {'end':5s}   {'total':5s}  {'reg':5s} {'ot':5s}")
-        print(f"{'-'*80}")
+        result.append(f"{'Employee':10s} {'Day':5s}    {'start':5s}  {'end':5s}   {'total':5s}  {'reg':5s} {'ot':5s}")
+        # print(f"{'Employee':10s} {'Day':5s}    {'start':5s}  {'end':5s}   {'total':5s}  {'reg':5s} {'ot':5s}")
+        result.append(f"{'-'*80}")
+        # print(f"{'-'*80}")
         for day in days:
             if day.month != report_start.month:
                 # log.info(f"{day.month} != {report_start.month}: {day.month != report_start.month}")
@@ -86,7 +91,8 @@ class SquareWorkday:
                 # log.info(f"start day: {report_start.day} ; eval day: {day}")
                 rec = list(filter(lambda r: r['start'].date() == day, data))
                 if rec == []:
-                    print(f"{'':10s} {day:%b-%d}")
+                    # print(f"{'':10s} {day:%b-%d}")
+                    result.append(f"{'':10s} {day:%b-%d}")
                 else:
                     shift = rec[0]
                     
@@ -101,14 +107,19 @@ class SquareWorkday:
                         shift['normal_time'] = 8.00
                         shift['ot_time'] = round(clock_time - shift['normal_time'],2)
                     # log.info(shift)
-                    print(f"{shift['employee']:10s} {start:%b-%d}   {start:%H:%M}  {end:%H:%M}   {clock_time:.2f}   {shift['normal_time']:.2f}  {shift['ot_time']:.2f}")
-        print("")
-        print(f"Pay total {'-'*70}")
+                    # print(f"{shift['employee']:10s} {start:%b-%d}   {start:%H:%M}  {end:%H:%M}   {clock_time:.2f}   {shift['normal_time']:.2f}  {shift['ot_time']:.2f}")
+                    result.append(f"{shift['employee']:10s} {start:%b-%d}   {start:%H:%M}  {end:%H:%M}   {clock_time:.2f}   {shift['normal_time']:.2f}  {shift['ot_time']:.2f}")
+        # print("")
+        result.append(f"Pay total {'-'*70}")
+        # print(f"Pay total {'-'*70}")
         for emp in emp_list:
             emp_recs = list(filter(lambda rec: rec['employee']==emp, data))
             normal_time = sum(list(map(lambda rec: rec['normal_time'], emp_recs)))
             ot_time =  sum(list(map(lambda rec: rec['ot_time'], emp_recs)))
-            print(f"{emp:20s}                     {normal_time:.2f}   {ot_time:.2f}")
+            # print(f"{emp:20s}                     {normal_time:.2f}   {ot_time:.2f}")
+            result.append(f"{emp:20s}                     {normal_time:.2f}   {ot_time:.2f}")
+
+        return '\n'.join(result)
 
     def get_employees(self) -> dict:
         log.info("Retrieving employees..")

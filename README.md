@@ -20,14 +20,18 @@ options:
   -h, --help  show this help message and exit
 ```  
 
-## Execution
+## Setup
 * Add an environment variable `SQUARE_ACCESS` with your assigned token provided by Square
-* Invoke the code
+* Make a local copy of `config.ini.example` and save it as `config.ini`
+* Add SMTP server settings within `config.ini`
+
+## Execution
+To invoke the code
 ```
 python .\timesheet.py 2023-07-01
 ```
 
-The result:
+The result is an email delivered to your defined mailbox in `config.ini`:
 ```
 Employee   Day      start  end     total  reg   ot
 --------------------------------------------------------------------------------

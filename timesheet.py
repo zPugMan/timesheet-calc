@@ -7,6 +7,7 @@ import configparser
 from email.message import EmailMessage
 from datetime import date, timedelta
 
+import azure.functions as func
 
 def get_workperiod(start: str) -> dict:
     if start == None:
@@ -72,16 +73,8 @@ def send_mail(body: str, subject: str):
             log.info("Quiting smtp connection")
             server.quit()
 
-if __name__ == "__main__":
-
-    parsr = argparse.ArgumentParser(
-        prog="timesheet",
-        description="Retrieve the current time logged by employee for the start date desired"
-    )
-    parsr.add_argument("start_date", type=string_date_format, help="Start date to retrieve timesheet data")
-    args = parsr.parse_args()
-
-    period = get_workperiod(args.start_date)
+def exec(start_date: date) -> None:
+    period = get_workperiod(start_date)
 
     log.basicConfig(level = log.INFO)
     log.info("Retrieving logged work schedules: " + str(period['start_date']) + " to " + str(period['end_date']))
@@ -91,4 +84,21 @@ if __name__ == "__main__":
 
     send_mail(body=time_report, subject=f"Time Report: {period['start_date']} - {period['end_date']}")
 
+
+def main(timesheetTimer: func.TimerRequest) -> None:
+    now = date.today()
+    log.info("Azure function initiated. " + str(now))    
+    exec(start_date=now)
     log.info("All done. Bye.")
+
+def manual() -> None:
+    log.info("Executing in manual mode..")
+    parsr = argparse.ArgumentParser(
+        prog="timesheet",
+        description="Retrieve the current time logged by employee for the start date desired"
+    )
+    parsr.add_argument("start_date", type=string_date_format, help="Start date to retrieve timesheet data", default=date.today())
+    args = parsr.parse_args()
+
+    exec(start_date=args.start_date)
+

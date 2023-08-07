@@ -138,7 +138,7 @@ class SquareWorkday:
             log.error(result)
             return
         
-    def __init__(self, environment = None|str):
+    def __init__(self, environment = None):
         log.basicConfig(level = log.INFO)
         if environment == None:
             self.environment = 'sandbox'

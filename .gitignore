@@ -280,3 +280,10 @@ pip-selfcheck.json
 
 # local dev secrets
 config.ini
+
+.python_packages
+.vscode
+
+#azure local artifacts
+__azurite*
+__blobstorage*

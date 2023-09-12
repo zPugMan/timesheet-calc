@@ -100,15 +100,15 @@ class SquareWorkday:
                     end = shift['end']
                     if shift['employee'] not in emp_list:
                         emp_list.append(shift['employee'])
-                    clock_time = round((end - start).seconds / 3600, 2)
+                    clock_time = round((end - start).seconds / 3600, 3)
                     shift['normal_time'] = float(clock_time)
                     shift['ot_time'] = 0
                     if clock_time > 8:
-                        shift['normal_time'] = 8.00
-                        shift['ot_time'] = round(clock_time - shift['normal_time'],2)
+                        shift['normal_time'] = 8.000
+                        shift['ot_time'] = round(clock_time - shift['normal_time'],3)
                     # log.info(shift)
                     # print(f"{shift['employee']:10s} {start:%b-%d}   {start:%H:%M}  {end:%H:%M}   {clock_time:.2f}   {shift['normal_time']:.2f}  {shift['ot_time']:.2f}")
-                    result.append(f"{shift['employee']:10s} {start:%b-%d}   {start:%H:%M}  {end:%H:%M}   {clock_time:.2f}   {shift['normal_time']:.2f}  {shift['ot_time']:.2f}")
+                    result.append(f"{shift['employee']:10s} {start:%b-%d}   {start:%H:%M}  {end:%H:%M}   {clock_time:.3f}   {shift['normal_time']:.3f}  {shift['ot_time']:.3f}")
         # print("")
         result.append(f"Pay total {'-'*70}")
         # print(f"Pay total {'-'*70}")
@@ -117,7 +117,7 @@ class SquareWorkday:
             normal_time = sum(list(map(lambda rec: rec['normal_time'], emp_recs)))
             ot_time =  sum(list(map(lambda rec: rec['ot_time'], emp_recs)))
             # print(f"{emp:20s}                     {normal_time:.2f}   {ot_time:.2f}")
-            result.append(f"{emp:20s}                     {normal_time:.2f}   {ot_time:.2f}")
+            result.append(f"{emp:20s}                     {normal_time:.3f}   {ot_time:.3f}")
 
         return '\n'.join(result)
 
@@ -127,11 +127,11 @@ class SquareWorkday:
         result = self.client.team.search_team_members(body={"query":{"filter": {"status":"ACTIVE"}}})
 
         if result.is_success():
-            log.info("Employee data retrieved")
             emp_list = {}
             for emp in result.body['team_members']:
                 emp_list[emp['id']] = emp['given_name'] + ' ' + emp['family_name'][0]
             log.debug(emp_list)
+            log.info(f"Employee data retrieved: {len(emp_list)}")
             return emp_list
         else:
             log.error("Failed to retrieve employee data.")

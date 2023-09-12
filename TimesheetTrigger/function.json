@@ -1,0 +1,11 @@
+{
+    "scriptFile": "timesheet.py",
+    "bindings": [
+        {
+            "schedule": "0 15 19 15,28-31 * *",
+            "name": "timesheetTimer",
+            "type": "timerTrigger",
+            "direction": "in"
+        }
+    ]
+}

@@ -1,4 +1,4 @@
-from jbrookerSquare.square_workday import SquareWorkday
+from .jbrookerSquare.square_workday import SquareWorkday
 import logging as log
 import argparse
 import re
@@ -14,7 +14,8 @@ def get_workperiod(start: str) -> dict:
         raise Exception("Start date expected, but was NONE") 
     
     start_dt = date.fromisoformat(start)
-    if start_dt.day == 1:
+    if start_dt.day >= 1 and start_dt.day <15:
+        start_dt = date(start_dt.year, start_dt.month, 1)
         end_dt = date(start_dt.year, start_dt.month, 15)
     else:
         if start_dt.month==12:
@@ -88,7 +89,7 @@ def exec(start_date: date) -> None:
 def main(timesheetTimer: func.TimerRequest) -> None:
     now = date.today()
     log.info("Azure function initiated. " + str(now))    
-    exec(start_date=now)
+    exec(start_date=str(now))
     log.info("All done. Bye.")
 
 def manual() -> None:

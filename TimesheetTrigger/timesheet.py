@@ -1,6 +1,8 @@
 from .jbrookerSquare.square_workday import SquareWorkday
 import logging as log
 import argparse
+import os
+import json
 import re
 import smtplib
 import configparser
@@ -34,16 +36,17 @@ def string_date_format(value: str, pat=re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}"
 
 def send_mail(body: str, subject: str):
     log.info("Retrieving SMTP properties")
-    cfg = configparser.RawConfigParser()
-    cfg.read('config.ini')
+    # cfg = configparser.RawConfigParser()
+    # cfg.read('config.ini')
+    cfg = json.loads(os.getenv('smtpCredentials'))
 
     msg = EmailMessage()
     msg['Subject'] = subject
-    msg['From'] = cfg.get('MailProperties', 'fromaddr')
-    msg['To'] = cfg.get('MailProperties','toaddrs')
-    smtp_server = cfg.get('MailProperties','server_smtp')
-    smtp_port = cfg.get('MailProperties','port_smtp')
-    smtp_secret = cfg.get('MailProperties','password')
+    msg['From'] = cfg['fromaddr']
+    msg['To'] = cfg['toaddrs']
+    smtp_server = cfg['server_smtp']
+    smtp_port = cfg['port_smtp']
+    smtp_secret = cfg['password']
     msg.set_content(body)
 
     msg.add_alternative("""

@@ -94,6 +94,11 @@ def main(timesheetTimer: func.TimerRequest) -> None:
     log.info("Azure function initiated. " + str(now))    
     # exec(start_date=str(now))
     log.info(f"AppInsights string: {os.getenv('APPINSIGHTS_INSTRUMENTATIONKEY')}")
+    try:
+        log.info(f"Square Token? {os.getenv('SQUARE_ACCESS')[0:10]}")
+    except Exception:
+        log.error("Exception on Square Token", Exception)
+
     log.info("All done. Bye.")
 
 def manual() -> None:

@@ -93,7 +93,7 @@ def main(timesheetTimer: func.TimerRequest) -> None:
     now = date.today()
     log.info("Azure function initiated. " + str(now))    
     # exec(start_date=str(now))
-    log.info(f"AppInsights string: {os.environ('APPINSIGHTS_INSTRUMENTATIONKEY')}")
+    log.info(f"AppInsights string: {os.getenv('APPINSIGHTS_INSTRUMENTATIONKEY')}")
     log.info("All done. Bye.")
 
 def manual() -> None:

@@ -16,7 +16,7 @@ def get_workperiod(start: str) -> dict:
         raise Exception("Start date expected, but was NONE") 
     
     start_dt = date.fromisoformat(start)
-    if start_dt.day >= 1 and start_dt.day <15:
+    if start_dt.day >= 1 and start_dt.day <=16:
         start_dt = date(start_dt.year, start_dt.month, 1)
         end_dt = date(start_dt.year, start_dt.month, 15)
     else:
@@ -92,12 +92,11 @@ def exec(start_date: date) -> None:
 def main(timesheetTimer: func.TimerRequest) -> None:
     now = date.today()
     log.info("Azure function initiated. " + str(now))    
-    # exec(start_date=str(now))
-    log.info(f"AppInsights string: {os.getenv('APPINSIGHTS_INSTRUMENTATIONKEY')}")
-    try:
-        log.info(f"Square Token? {os.getenv('SQUARE_ACCESS')[0:10]}")
-    except Exception:
-        log.error("Exception on Square Token", Exception)
+    exec(start_date=str(now))
+    # try:
+    #     log.info(f"Square Token? {os.getenv('SQUARE_ACCESS')[0:10]}")
+    # except Exception:
+    #     log.error("Exception on Square Token", Exception)
 
     log.info("All done. Bye.")
 

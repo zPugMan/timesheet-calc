@@ -2,7 +2,7 @@
     "scriptFile": "timesheet.py",
     "bindings": [
         {
-            "schedule": "0 5 19 15,28-31 * *",
+            "schedule": "0 5,10,15,20,25,30,35,40,45,55 * 15,16,28-31 * *",
             "name": "timesheetTimer",
             "type": "timerTrigger",
             "direction": "in"

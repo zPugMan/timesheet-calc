@@ -16,7 +16,7 @@ def get_workperiod(start: str) -> dict:
         raise Exception("Start date expected, but was NONE") 
     
     start_dt = date.fromisoformat(start)
-    if start_dt.day >= 1 and start_dt.day <=16:
+    if start_dt.day >= 1 and start_dt.day <=15:
         start_dt = date(start_dt.year, start_dt.month, 1)
         end_dt = date(start_dt.year, start_dt.month, 15)
     else:

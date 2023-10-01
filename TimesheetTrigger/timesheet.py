@@ -11,23 +11,37 @@ from datetime import date, timedelta
 
 import azure.functions as func
 
-def get_workperiod(start: str) -> dict:
-    if start == None:
-        raise Exception("Start date expected, but was NONE") 
+def period_end(end: date) -> bool:
+    if end == None:
+        raise Exception("End date expected on period_end check..")
     
-    start_dt = date.fromisoformat(start)
-    if start_dt.day >= 1 and start_dt.day <=15:
-        start_dt = date(start_dt.year, start_dt.month, 1)
-        end_dt = date(start_dt.year, start_dt.month, 15)
+    next_day = end + timedelta(days=1)
+    
+    if end.day == 15:
+        return True
+    elif next_day.month > end.month:
+        return True
     else:
-        if start_dt.month==12:
-            n_dt = date(start_dt.year+1,1,1)
+        return False
+    
+
+def get_workperiod(end: str) -> dict:
+    if end == None:
+        raise Exception("End date expected, but was NONE") 
+    
+    end_dt = date.fromisoformat(end)
+    if end_dt.day >= 1 and end_dt.day <=15:
+        end_dt = date(end_dt.year, end_dt.month, 1)
+        end_dt = date(end_dt.year, end_dt.month, 15)
+    else:
+        if end_dt.month==12:
+            n_dt = date(end_dt.year+1,1,1)
         else:
-            n_dt = date(start_dt.year, start_dt.month+1, 1)
+            n_dt = date(end_dt.year, end_dt.month+1, 1)
             
         end_dt = n_dt - timedelta(days=1)
 
-    return { "start_date": start_dt, "end_date": end_dt}
+    return { "start_date": end_dt, "end_date": end_dt}
 
 def string_date_format(value: str, pat=re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}")):
     if not pat.match(value):
@@ -77,8 +91,8 @@ def send_mail(body: str, subject: str):
             log.info("Quiting smtp connection")
             server.quit()
 
-def exec(start_date: date) -> None:
-    period = get_workperiod(start_date)
+def exec(end_date: str) -> None:
+    period = get_workperiod(end=end_date)
 
     log.basicConfig(level = log.INFO)
     log.info("Retrieving logged work schedules: " + str(period['start_date']) + " to " + str(period['end_date']))
@@ -92,7 +106,10 @@ def exec(start_date: date) -> None:
 def main(timesheetTimer: func.TimerRequest) -> None:
     now = date.today()
     log.info("Azure function initiated. " + str(now))    
-    exec(start_date=str(now))
+    if period_end(now):
+        exec(end_date==str(now))
+    else:
+        log.info(f"{now} not end of month.")
     # try:
     #     log.info(f"Square Token? {os.getenv('SQUARE_ACCESS')[0:10]}")
     # except Exception:

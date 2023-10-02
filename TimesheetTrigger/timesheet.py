@@ -11,7 +11,7 @@ from datetime import date, datetime, timedelta
 import time
 import pytz
 
-# import azure.functions as func
+import azure.functions as func
 
 def period_end(end: date) -> bool:
     if end == None:
@@ -108,13 +108,11 @@ def exec(end_date: str) -> None:
     time_report = s.retrieve_workday_data(start_date=str(period['start_date']), end_date=str(period['end_date']))
 
     print(f"{time_report}")
-    # send_mail(body=time_report, subject=f"Time Report: {period['start_date']} - {period['end_date']}")
+    send_mail(body=time_report, subject=f"Time Report: {period['start_date']} - {period['end_date']}")
 
 
-# def main(timesheetTimer: func.TimerRequest) -> None:
-def main() -> None:
-    # now = date.today()
-    now = date(2023,9,30)
+def main(timesheetTimer: func.TimerRequest) -> None:
+    now = date.today()
     log.info("Azure function initiated. " + str(now))    
     if period_end(now):
         exec(end_date=str(now))
@@ -138,8 +136,8 @@ def manual() -> None:
 
     exec(end_date=args.start_date)
 
-if __name__ == "__main__":
-    logger = log.getLogger()
-    logger.addHandler(hdlr=log.StreamHandler())
-    logger.setLevel(level=log.DEBUG)
-    main()
+# if __name__ == "__main__":
+#     logger = log.getLogger()
+#     logger.addHandler(hdlr=log.StreamHandler())
+#     logger.setLevel(level=log.DEBUG)
+#     main()

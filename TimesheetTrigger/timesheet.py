@@ -1,4 +1,4 @@
-from .jbrookerSquare.square_workday import SquareWorkday
+from jbrookerSquare.square_workday import SquareWorkday
 import logging as log
 import argparse
 import os
@@ -7,9 +7,11 @@ import re
 import smtplib
 import configparser
 from email.message import EmailMessage
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
+import time
+import pytz
 
-import azure.functions as func
+# import azure.functions as func
 
 def period_end(end: date) -> bool:
     if end == None:
@@ -27,21 +29,26 @@ def period_end(end: date) -> bool:
 
 def get_workperiod(end: str) -> dict:
     if end == None:
-        raise Exception("End date expected, but was NONE") 
+        raise Exception("End date expected, but was NONE")
     
-    end_dt = date.fromisoformat(end)
+    is_utc = True
+    if time.tzname[0][0:7]=='Pacific':
+        is_utc = False
+    
+    end_dt = datetime.fromisoformat(end)
+    if is_utc:
+        end_dt.replace(tzinfo=pytz.utc)    
+    else:
+        end_dt.astimezone(pytz.timezone('US/Pacific'))
+        log.info(f"UTC conversion to 'US/Pacific': {end_dt}")
+
     if end_dt.day >= 1 and end_dt.day <=15:
-        end_dt = date(end_dt.year, end_dt.month, 1)
+        start_dt = date(end_dt.year, end_dt.month, 1)
         end_dt = date(end_dt.year, end_dt.month, 15)
     else:
-        if end_dt.month==12:
-            n_dt = date(end_dt.year+1,1,1)
-        else:
-            n_dt = date(end_dt.year, end_dt.month+1, 1)
-            
-        end_dt = n_dt - timedelta(days=1)
+        start_dt = date(end_dt.year, end_dt.month, 16)
 
-    return { "start_date": end_dt, "end_date": end_dt}
+    return { "start_date": start_dt, "end_date": end_dt}
 
 def string_date_format(value: str, pat=re.compile(r"^[0-9]{4}-[0-9]{2}-[0-9]{2}")):
     if not pat.match(value):
@@ -100,14 +107,17 @@ def exec(end_date: str) -> None:
     s = SquareWorkday(environment='production')
     time_report = s.retrieve_workday_data(start_date=str(period['start_date']), end_date=str(period['end_date']))
 
-    send_mail(body=time_report, subject=f"Time Report: {period['start_date']} - {period['end_date']}")
+    print(f"{time_report}")
+    # send_mail(body=time_report, subject=f"Time Report: {period['start_date']} - {period['end_date']}")
 
 
-def main(timesheetTimer: func.TimerRequest) -> None:
-    now = date.today()
+# def main(timesheetTimer: func.TimerRequest) -> None:
+def main() -> None:
+    # now = date.today()
+    now = date(2023,9,30)
     log.info("Azure function initiated. " + str(now))    
     if period_end(now):
-        exec(end_date==str(now))
+        exec(end_date=str(now))
     else:
         log.info(f"{now} not end of month.")
     # try:
@@ -126,5 +136,10 @@ def manual() -> None:
     parsr.add_argument("start_date", type=string_date_format, help="Start date to retrieve timesheet data", default=date.today())
     args = parsr.parse_args()
 
-    exec(start_date=args.start_date)
+    exec(end_date=args.start_date)
 
+if __name__ == "__main__":
+    logger = log.getLogger()
+    logger.addHandler(hdlr=log.StreamHandler())
+    logger.setLevel(level=log.DEBUG)
+    main()

@@ -20,12 +20,15 @@ To setup secrets using Azure Vault services:
   * Secret "GET" permission only, which is assigned to the Managed Identity previously created
 * Modify the Azure Function created to explicitly add a user-assigned identity. This is the Managed Identity previously created that has "GET" permissions to the vault.
 
+Once the secrets are defined, they can be surfaced as environment variables.
+
 ### Github Action
 Deployment from Github to Azure relies on a secret unique to the Azure function.
 
 To retrieve the secret for deployment:
-* Navigate to the Azure Function
-* Under Functions / App keys, copy the `default` key
+* Navigate to the Azure Function App
+* Under Overview, retrieve the _Get Publish Profile_. This is an XML file that is then referenced by Github.
+* Open the downloaded file and copy the contents.
 
 To set the secret for deployment workflow actions:
 * In the Github repository, navigate to: Security / Secrets and variables / Actions

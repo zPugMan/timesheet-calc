@@ -26,9 +26,9 @@ options:
 * Add SMTP server settings within `config.ini`
 
 ## Execution
-To invoke the code
+To invoke the code manually:
 ```
-python .\timesheet.py 2023-07-01
+python -c "import timesheet; timesheet.manual()" 2023-07-01
 ```
 
 The result is an email delivered to your defined mailbox in `config.ini`:

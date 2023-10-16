@@ -17,11 +17,11 @@ def period_end(end: date) -> bool:
     if end == None:
         raise Exception("End date expected on period_end check..")
     
-    next_day = end + timedelta(days=1)
+    next_day = end + timedelta(days=-1)
     
-    if end.day == 15:
+    if end.day == 16:
         return True
-    elif next_day.month > end.month:
+    elif next_day.month == end.month:
         return True
     else:
         return False
@@ -42,7 +42,7 @@ def get_workperiod(end: str) -> dict:
         end_dt.astimezone(pytz.timezone('US/Pacific'))
         log.info(f"UTC conversion to 'US/Pacific': {end_dt}")
 
-    if end_dt.day >= 1 and end_dt.day <=15:
+    if end_dt.day >= 1 and end_dt.day <=17:
         start_dt = date(end_dt.year, end_dt.month, 1)
         end_dt = date(end_dt.year, end_dt.month, 15)
     else:

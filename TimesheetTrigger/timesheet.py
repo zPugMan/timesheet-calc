@@ -17,11 +17,11 @@ def period_end(end: date) -> bool:
     if end == None:
         raise Exception("End date expected on period_end check..")
     
-    next_day = end + timedelta(days=1)
+    next_day = end + timedelta(days=-1)
     
-    if end.day == 15:
+    if end.day == 16:
         return True
-    elif next_day.month > end.month:
+    elif next_day.month == end.month:
         return True
     else:
         return False

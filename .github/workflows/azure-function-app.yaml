@@ -20,7 +20,7 @@ name: Deploy Python project to Azure Function App
 
 on:
   push:
-    branches: ["main"]
+    # branches: ["main"]
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'jbrooker-funcs'   # set this to your function app name on Azure

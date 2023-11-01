@@ -21,7 +21,7 @@ def period_end(end: date) -> bool:
     
     if end.day == 16:
         return True
-    elif next_day.month == end.month:
+    elif end.day == 1:  #more UTC conversion confusion
         return True
     else:
         return False

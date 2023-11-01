@@ -42,11 +42,15 @@ def get_workperiod(end: str) -> dict:
         end_dt.astimezone(pytz.timezone('US/Pacific'))
         log.info(f"UTC conversion to 'US/Pacific': {end_dt}")
 
-    if end_dt.day >= 1 and end_dt.day <=17:
+    if end_dt.day > 1 and end_dt.day <=17:
         start_dt = date(end_dt.year, end_dt.month, 1)
         end_dt = date(end_dt.year, end_dt.month, 15)
+        log.info(f"Using first period for month: {end_dt.month}")
     else:
         start_dt = date(end_dt.year, end_dt.month, 16)
+        last_day = end_dt + timedelta(days=-1)
+        end_dt = last_day
+        log.info(f"Using second period for month: {end_dt.month}")
 
     return { "start_date": start_dt, "end_date": end_dt}
 

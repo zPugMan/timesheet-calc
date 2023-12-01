@@ -1,4 +1,4 @@
-from jbrookerSquare.square_workday import SquareWorkday
+from .jbrookerSquare.square_workday import SquareWorkday
 import logging as log
 import argparse
 import os

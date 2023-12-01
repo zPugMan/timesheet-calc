@@ -47,15 +47,8 @@ def get_workperiod(end: str) -> dict:
         end_dt = date(end_dt.year, end_dt.month, 15)
         log.info(f"Using first period for month: {end_dt.month}")
     else:
-<<<<<<< HEAD
         start_dt = date(end_dt.year, end_dt.month, 16)
         end_dt = end_dt.date()
-=======
-        last_day = end_dt + timedelta(days=-1)
-        end_dt = last_day
-        start_dt = date(last_day.year, last_day.month, 16)
-        log.info(f"Using second period for month: {end_dt.month}")
->>>>>>> f4c0ebddc3c3c91ee9837182302fa9ec0039b8b9
 
     return { "start_date": start_dt, "end_date": end_dt}
 

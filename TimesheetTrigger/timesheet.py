@@ -1,4 +1,4 @@
-from .jbrookerSquare.square_workday import SquareWorkday
+from jbrookerSquare.square_workday import SquareWorkday
 import logging as log
 import argparse
 import os
@@ -47,6 +47,7 @@ def get_workperiod(end: str) -> dict:
         end_dt = date(end_dt.year, end_dt.month, 15)
     else:
         start_dt = date(end_dt.year, end_dt.month, 16)
+        end_dt = end_dt.date()
 
     return { "start_date": start_dt, "end_date": end_dt}
 
